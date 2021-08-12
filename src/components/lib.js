@@ -2,7 +2,7 @@ import {FaSpinner} from 'react-icons/fa'
 import React from 'react'
 
 function Spinner() {
-  return <FaSpinner />
+  return <FaSpinner className="spinner" />
 }
 
 function CircleButton() {
@@ -17,4 +17,21 @@ function CircleButton() {
   )
 }
 
-export {CircleButton, Spinner}
+function FullPageSpinner() {
+  return (
+    <div
+      style={{
+        fontSize: '4em',
+        height: '100vh',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
+      }}
+    >
+      <Spinner />
+    </div>
+  )
+}
+
+export {CircleButton, Spinner, FullPageSpinner}

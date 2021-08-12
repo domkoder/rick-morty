@@ -103,6 +103,14 @@ input[type='search']::-webkit-search-results-decoration {
   grid-template-columns: 1fr 3fr;
 }
 
+.spinner {
+  animation: spin 1s linear infinite;
+}
+
+.danger {
+  color: #ef5350;
+}
+
 body {
   margin: 0;
   font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue',
@@ -212,6 +220,8 @@ body {
 .profile__body {
   display: flex;
   align-items: center;
+  text-decoration: none;
+  color: #212529;
 }
 
 .profile__figure {
@@ -243,7 +253,7 @@ body {
   background-color: white;
 }
 
-@keyframes App-logo-spin {
+@keyframes spin {
   from {
     transform: rotate(0deg);
   }
