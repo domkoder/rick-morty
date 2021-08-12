@@ -2,18 +2,8 @@ import React from 'react'
 import {FaPlusCircle, FaMinusCircle} from 'react-icons/fa'
 import {Link} from 'react-router-dom'
 
-const loadingCharacter = {
-  id: '',
-  image: '../../cover-image.svg',
-  name: 'Loading...',
-  status: 'loading...',
-  species: 'loading...',
-  gender: 'Loading...',
-}
-
 function CharacterCard({character, onDelete}) {
-  const {id, image, name, status, species, gender} =
-    character ?? loadingCharacter
+  const {id, image, name, status, species, gender} = character
   return (
     <div className="card profile">
       <Link className="profile__body" to={`/character/${id}`}>

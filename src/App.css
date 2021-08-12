@@ -107,6 +107,11 @@ input[type='search']::-webkit-search-results-decoration {
   animation: spin 1s linear infinite;
 }
 
+.spinner {
+  display: block;
+  margin: 2rem auto;
+}
+
 .danger {
   color: #ef5350;
 }

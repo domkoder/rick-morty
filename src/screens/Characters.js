@@ -3,17 +3,23 @@ import axios from 'axios'
 import CharacterCard from '../components/CharacterCard'
 import {Spinner} from '../components/lib'
 
+const loadingCharacter = {
+  id: '',
+  image: '../../cover-image.svg',
+  name: 'Loading...',
+  status: 'loading...',
+  species: 'loading...',
+  gender: 'Loading...',
+  loadingCharacter: true,
+}
+
+const loadingCharacters = Array.from({length: 20}, (v, index) => ({
+  id: `loading-book-${index}`,
+  ...loadingCharacter,
+}))
+
 function CharactersScreen({onDelete}) {
-  // const [status, setStatus] = React.useState({})
-  // const [characters, setCharacters] = React.useState([])
-  // const [error, setError] = React.useState(false)
   const [pageNumber, setPageNumber] = React.useState(0)
-  // const [hasMore, setHasMore] = React.useState(false)
-
-  // const isLoading = status === 'pending'
-  // const isError = status === 'rejected'
-  // const isSuccess = status === 'resolved'
-
   const [loading, setLoading] = React.useState(true)
   const [error, setError] = React.useState(false)
   const [characters, setCharacters] = React.useState([])
@@ -84,9 +90,7 @@ function CharactersScreen({onDelete}) {
             }
           })}
         </ul>
-      ) : (
-        <p>No character found. Try another search.</p>
-      )}
+      ) : null}
 
       {error ? (
         <div className="danger">
@@ -96,13 +100,16 @@ function CharactersScreen({onDelete}) {
       ) : null}
 
       {loading ? (
-        <Spinner
-          style={{
-            display: 'block',
-            margin: 'auto',
-            // alginItems: 'center',
-          }}
-        />
+        <div>
+          <Spinner className="spinner-center" />
+          <ul className="character-list">
+            {loadingCharacters.map((character, index) => (
+              <li key={character.id} aria-label={character.name}>
+                <CharacterCard character={character} onDelete={onDelete} />
+              </li>
+            ))}
+          </ul>
+        </div>
       ) : null}
     </div>
   )
