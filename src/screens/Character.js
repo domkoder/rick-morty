@@ -21,8 +21,25 @@ const loadingCharacter = {
 
 function CharacterScreen({onDelete, onAdd, favorites}) {
   const {id} = useParams()
-  const {character} = useFetchCharacter(favorites, `character/${id}`)
-  const buttonType = 'remove'
+  // const {character} = useFetchCharacter(favorites, `character/${id}`)
+  const [character, setCharacter] = React.useState(null)
+  const [error, setError] = React.useState(null)
+
+  React.useEffect(() => {
+    axios({
+      method: 'GET',
+      url: `https://rickandmortyapi.com/api/character/${id}`,
+    })
+      .then(({data}) => {
+        data.isFavorite = favorites.find(({id}) => id === data.id)
+          ? true
+          : false
+        console.log(favorites)
+        setCharacter(data)
+      })
+      .catch(error => setError(error))
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id])
 
   const {
     image,
@@ -36,10 +53,6 @@ function CharacterScreen({onDelete, onAdd, favorites}) {
     episode,
     isFavorite,
   } = character ?? loadingCharacter
-
-  console.log('buttonType:', buttonType)
-
-  // function buttonType(params) {}
 
   return (
     <div aria-label={name} style={{marginTop: '1.5em'}}>
@@ -64,31 +77,31 @@ function CharacterScreen({onDelete, onAdd, favorites}) {
         <div className="profile__footer">
           {/* isFavorite */}
 
-          {buttonType === 'remove' ? (
+          {isFavorite ? (
             <button
               className="profile__action"
               aria-label="Add to list"
               data-state="tooltip-hidden"
               onClick={() => {
                 onDelete(id)
-                // setButtonType('add')
+                setCharacter({...character, isFavorite: false})
               }}
             >
               <FaMinusCircle style={{color: '#ef5350'}} />
             </button>
-          ) : buttonType === 'add' ? (
+          ) : (
             <button
               className="profile__action"
               aria-label="Add to list"
               data-state="tooltip-hidden"
               onClick={() => {
                 onAdd(character)
-                // setButtonType('remove')
+                setCharacter({...character, isFavorite: true})
               }}
             >
               <FaPlusCircle style={{color: '#2e6ae7'}} />
             </button>
-          ) : null}
+          )}
         </div>
       </div>
     </div>

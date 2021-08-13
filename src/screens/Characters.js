@@ -20,10 +20,56 @@ const loadingCharacters = Array.from({length: 20}, (v, index) => ({
 
 function CharactersScreen({onDelete, favorites, onAdd}) {
   const [pageNumber, setPageNumber] = React.useState(1)
-  const {loading, error, characters, hasMore} = useFetchInfinite(
-    favorites,
-    `character/?page=${pageNumber}`,
-  )
+
+  // const {loading, error, characters, hasMore} = useFetchInfinite(
+  //   favorites,
+  //   `character/?page=${pageNumber}`,
+  // )
+
+  const [loading, setLoading] = React.useState(true)
+  const [error, setError] = React.useState(false)
+  const [characters, setCharacters] = React.useState([])
+  const [hasMore, setHasMore] = React.useState(false)
+
+  React.useEffect(() => {
+    setLoading(true)
+    setError(false)
+    axios({
+      method: 'GET',
+      url: `https://rickandmortyapi.com/api/character/?page=${pageNumber}`,
+    })
+      .then(({data}) => {
+        data.results.map(result => {
+          return (result.isFavorite = favorites.find(({id}) => id === result.id)
+            ? true
+            : false)
+        })
+
+        console.log('data.results:', data.results)
+
+        setCharacters(previousCharacter => {
+          return [...previousCharacter, ...data.results]
+        })
+        setHasMore(data.results.length > 0)
+        setLoading(false)
+      })
+      .catch(error => {
+        setError(true)
+        setLoading(false)
+        console.log(error)
+      })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pageNumber])
+
+  const changeIsFavorite = (id, isFavorite) => {
+    setCharacters(
+      characters.map(character =>
+        character.id === id
+          ? {...character, isFavorite: isFavorite}
+          : character,
+      ),
+    )
+  }
 
   const observer = React.useRef()
   const lastCharacterElementRef = React.useCallback(
@@ -62,6 +108,7 @@ function CharactersScreen({onDelete, favorites, onAdd}) {
                     favorites={favorites}
                     onDelete={onDelete}
                     onAdd={onAdd}
+                    changeIsFavorite={changeIsFavorite}
                   />
                 </li>
               )
@@ -73,6 +120,8 @@ function CharactersScreen({onDelete, favorites, onAdd}) {
                     favorites={favorites}
                     onDelete={onDelete}
                     onAdd={onAdd}
+                    changeIsFavorite={changeIsFavorite}
+                    cardType="test"
                   />
                 </li>
               )

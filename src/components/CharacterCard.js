@@ -2,7 +2,13 @@ import React from 'react'
 import {FaPlusCircle, FaMinusCircle} from 'react-icons/fa'
 import {Link} from 'react-router-dom'
 
-function CharacterCard({character, onDelete, onAdd}) {
+function CharacterCard({
+  character,
+  onDelete,
+  onAdd,
+  changeIsFavorite,
+  cardType,
+}) {
   const {id, image, name, status, species, gender, isFavorite} = character
   // console.log(favorites)
 
@@ -33,9 +39,14 @@ function CharacterCard({character, onDelete, onAdd}) {
         {isFavorite ? (
           <button
             className="profile__action"
-            aria-label="Add to list"
+            aria-label="remove from list"
             data-state="tooltip-hidden"
-            onClick={() => onDelete(character.id)}
+            onClick={() => {
+              onDelete(id)
+              if (changeIsFavorite) {
+                changeIsFavorite(id, false)
+              }
+            }}
           >
             <FaMinusCircle style={{color: '#ef5350'}} />
           </button>
@@ -44,7 +55,12 @@ function CharacterCard({character, onDelete, onAdd}) {
             className="profile__action"
             aria-label="Add to list"
             data-state="tooltip-hidden"
-            onClick={() => onAdd(character)}
+            onClick={() => {
+              onAdd(character)
+              if (changeIsFavorite) {
+                changeIsFavorite(id, true)
+              }
+            }}
           >
             <FaPlusCircle style={{color: '#2e6ae7'}} />
           </button>
