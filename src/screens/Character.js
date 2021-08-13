@@ -17,6 +17,7 @@ const loadingCharacter = {
   location: {name: 'Loading...'},
   episode: {length: 'Loading...'},
   loadingCharacter: true,
+  isFavorite: '',
 }
 
 function CharacterScreen({onDelete, onAdd, favorites}) {
@@ -32,14 +33,15 @@ function CharacterScreen({onDelete, onAdd, favorites}) {
     })
       .then(({data}) => {
         data.isFavorite = favorites.find(({id}) => id === data.id)
-          ? true
-          : false
-        console.log(favorites)
+          ? 'true'
+          : 'false'
+        // console.log(favorites)
         setCharacter(data)
       })
       .catch(error => setError(error))
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id])
+  console.log('character:', character)
 
   const {
     image,
@@ -53,6 +55,10 @@ function CharacterScreen({onDelete, onAdd, favorites}) {
     episode,
     isFavorite,
   } = character ?? loadingCharacter
+
+  const changeIsFavorite = isFavorite => {
+    setCharacter({...character, isFavorite: isFavorite})
+  }
 
   return (
     <div aria-label={name} style={{marginTop: '1.5em'}}>
@@ -77,31 +83,33 @@ function CharacterScreen({onDelete, onAdd, favorites}) {
         <div className="profile__footer">
           {/* isFavorite */}
 
-          {isFavorite ? (
+          {isFavorite === 'true' ? (
             <button
-              className="profile__action"
-              aria-label="Add to list"
+              className="profile__action tooltip"
+              aria-label="Remove favorite"
               data-state="tooltip-hidden"
               onClick={() => {
                 onDelete(id)
-                setCharacter({...character, isFavorite: false})
+                changeIsFavorite('false')
               }}
             >
+              <span className="tooltip__text">Remove favorite</span>
               <FaMinusCircle style={{color: '#ef5350'}} />
             </button>
-          ) : (
+          ) : isFavorite === 'false' ? (
             <button
-              className="profile__action"
-              aria-label="Add to list"
+              className="profile__action tooltip"
+              aria-label="Add favorite"
               data-state="tooltip-hidden"
               onClick={() => {
                 onAdd(character)
-                setCharacter({...character, isFavorite: true})
+                changeIsFavorite('true')
               }}
             >
+              <span className="tooltip__text">Add favorite</span>
               <FaPlusCircle style={{color: '#2e6ae7'}} />
             </button>
-          )}
+          ) : null}
         </div>
       </div>
     </div>

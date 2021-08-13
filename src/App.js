@@ -21,14 +21,15 @@ function App() {
 
   // Delete from favorite list
   const deleteFavorite = id => {
-    setFavorites(favorites.filter(favorite => favorite.id !== id))
+    setFavorites(favorites.filter(favorite => favorite.id !== parseInt(id)))
     // console.log(favorites.filter(favorite => favorite.id !== id))
-    console.log('removed favorite')
+    console.log(typeof parseInt(id))
+    console.log('removed favorite:', id)
   }
 
   // Add to favorite list
   const addFavorite = character => {
-    const newFavorite = {...character, isFavorite: true}
+    const newFavorite = {...character, isFavorite: 'true'}
     setFavorites([newFavorite, ...favorites])
     console.log('add favorite')
   }

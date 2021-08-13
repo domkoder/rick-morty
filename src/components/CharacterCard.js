@@ -35,36 +35,38 @@ function CharacterCard({
           <div className="">species: {`${species}`}</div>
         </div>
       </Link>
-      <div className="profile__footer">
-        {isFavorite ? (
+      <div className="profile__footer tooltip">
+        {isFavorite === 'true' ? (
           <button
             className="profile__action"
-            aria-label="remove from list"
+            aria-label="Remove from list"
             data-state="tooltip-hidden"
             onClick={() => {
               onDelete(id)
               if (changeIsFavorite) {
-                changeIsFavorite(id, false)
+                changeIsFavorite(id, 'false')
               }
             }}
           >
+            <span className="tooltip__text">Remove favorite</span>
             <FaMinusCircle style={{color: '#ef5350'}} />
           </button>
-        ) : (
+        ) : isFavorite === 'false' ? (
           <button
-            className="profile__action"
+            className="profile__action tooltip"
             aria-label="Add to list"
             data-state="tooltip-hidden"
             onClick={() => {
               onAdd(character)
               if (changeIsFavorite) {
-                changeIsFavorite(id, true)
+                changeIsFavorite(id, 'true')
               }
             }}
           >
+            <span className="tooltip__text">Add favorite</span>
             <FaPlusCircle style={{color: '#2e6ae7'}} />
           </button>
-        )}
+        ) : null}
       </div>
     </div>
   )

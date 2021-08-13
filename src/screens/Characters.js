@@ -41,8 +41,8 @@ function CharactersScreen({onDelete, favorites, onAdd}) {
       .then(({data}) => {
         data.results.map(result => {
           return (result.isFavorite = favorites.find(({id}) => id === result.id)
-            ? true
-            : false)
+            ? 'true'
+            : 'false')
         })
 
         console.log('data.results:', data.results)
@@ -143,7 +143,6 @@ function CharactersScreen({onDelete, favorites, onAdd}) {
           <ul className="character-list">
             {loadingCharacters.map((character, index) => (
               <li key={character.id} aria-label={character.name}>
-                {character.id}
                 <CharacterCard character={character} />
               </li>
             ))}
