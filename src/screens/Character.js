@@ -3,6 +3,8 @@ import {useParams} from 'react-router-dom'
 import {client} from '../utils/client'
 import {useAsync} from '../utils/hooks'
 import {FaPlusCircle, FaMinusCircle} from 'react-icons/fa'
+import axios from 'axios'
+import {useFetchCharacter} from '../utils/hooks'
 
 const loadingCharacter = {
   image: '../../cover-image.svg',
@@ -17,15 +19,10 @@ const loadingCharacter = {
   loadingCharacter: true,
 }
 
-function CharacterScreen() {
+function CharacterScreen({onDelete, onAdd, favorites}) {
   const {id} = useParams()
-  const {data, run} = useAsync()
-
-  React.useEffect(() => {
-    run(client(`character/${id}`))
-  }, [run, id])
-
-  console.log('data:', data)
+  const {character} = useFetchCharacter(favorites, `character/${id}`)
+  const buttonType = 'remove'
 
   const {
     image,
@@ -37,10 +34,15 @@ function CharacterScreen() {
     origin,
     location,
     episode,
-  } = data ?? loadingCharacter
+    isFavorite,
+  } = character ?? loadingCharacter
+
+  console.log('buttonType:', buttonType)
+
+  // function buttonType(params) {}
 
   return (
-    <div aria-label={name}>
+    <div aria-label={name} style={{marginTop: '1.5em'}}>
       <div className="card profile">
         <div className="profile__body" style={{alignItems: 'flex-start'}}>
           <figure className="profile__figure">
@@ -59,15 +61,35 @@ function CharacterScreen() {
             <div className="">number of episode: {`${episode.length}`}</div>
           </div>
         </div>
-        <footer className="profile__footer">
-          <button
-            className="profile__action"
-            aria-label="Add to list"
-            data-state="tooltip-hidden"
-          >
-            <FaPlusCircle />
-          </button>
-        </footer>
+        <div className="profile__footer">
+          {/* isFavorite */}
+
+          {buttonType === 'remove' ? (
+            <button
+              className="profile__action"
+              aria-label="Add to list"
+              data-state="tooltip-hidden"
+              onClick={() => {
+                onDelete(id)
+                // setButtonType('add')
+              }}
+            >
+              <FaMinusCircle style={{color: '#ef5350'}} />
+            </button>
+          ) : buttonType === 'add' ? (
+            <button
+              className="profile__action"
+              aria-label="Add to list"
+              data-state="tooltip-hidden"
+              onClick={() => {
+                onAdd(character)
+                // setButtonType('remove')
+              }}
+            >
+              <FaPlusCircle style={{color: '#2e6ae7'}} />
+            </button>
+          ) : null}
+        </div>
       </div>
     </div>
   )

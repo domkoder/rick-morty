@@ -1,4 +1,5 @@
 import * as React from 'react'
+import axios from 'axios'
 
 function useSafeDispatch(dispatch) {
   const mounted = React.useRef(false)
@@ -109,4 +110,68 @@ function useLocalStorageState(
   return [state, setState]
 }
 
-export {useAsync, useLocalStorageState}
+function useFetchInfinite(favorites, endpoint) {
+  const [loading, setLoading] = React.useState(true)
+  const [error, setError] = React.useState(false)
+  const [characters, setCharacters] = React.useState([])
+  const [hasMore, setHasMore] = React.useState(false)
+  const apiURL = `https://rickandmortyapi.com/api`
+
+  React.useEffect(() => {
+    setCharacters([])
+  }, [])
+
+  React.useEffect(() => {
+    setLoading(true)
+    setError(false)
+    axios({
+      method: 'GET',
+      url: `${apiURL}/${endpoint}`,
+    })
+      .then(({data}) => {
+        data.results.map(result => {
+          return (result.isFavorite = favorites.find(({id}) => id === result.id)
+            ? true
+            : false)
+        })
+
+        console.log('data.results:', data.results)
+
+        setCharacters(previousCharacter => {
+          return [...previousCharacter, ...data.results]
+        })
+        setHasMore(data.results.length > 0)
+        setLoading(false)
+      })
+      .catch(error => {
+        setError(true)
+        setLoading(false)
+        console.log(error)
+      })
+  }, [endpoint])
+  return {loading, error, characters, hasMore}
+}
+
+function useFetchCharacter(favorites, endpoint) {
+  const [character, setCharacter] = React.useState(null)
+  const [error, setError] = React.useState(false)
+  const apiURL = `https://rickandmortyapi.com/api`
+
+  React.useEffect(() => {
+    axios({
+      method: 'GET',
+      url: `${apiURL}/${endpoint}`,
+    })
+      .then(({data}) => {
+        data.isFavorite = favorites.find(({id}) => id === data.id)
+          ? true
+          : false
+        console.log(favorites)
+        setCharacter(data)
+      })
+      .catch(error => {})
+  }, [endpoint])
+  return {error, character}
+}
+
+export {useAsync, useLocalStorageState, useFetchInfinite, useFetchCharacter}

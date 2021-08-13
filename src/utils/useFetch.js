@@ -1,41 +1,49 @@
-import {useEffect, useState} from 'react'
+// import {useEffect, useState} from 'react'
+import React from 'react'
 
 import axios from 'axios'
 
-export default function useBookSearch(query, pageNumber) {
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(false)
-  const [books, setBooks] = useState([])
-  const [hasMore, setHasMore] = useState(false)
+export default function useBookSearch(query, pageNumber, favorites) {
+  const [loading, setLoading] = React.useState(true)
+  const [error, setError] = React.useState(false)
+  const [characters, setCharacters] = React.useState([])
+  const [hasMore, setHasMore] = React.useState(false)
 
-  useEffect(() => {
-    setBooks([])
+  React.useEffect(() => {
+    setCharacters([])
   }, [query])
 
-  useEffect(() => {
+  React.useEffect(() => {
     setLoading(true)
     setError(false)
-    let cancel
     axios({
       method: 'GET',
-      url: 'http://openlibrary.org/search.json',
-      params: {q: query, page: pageNumber},
+      url: 'https://rickandmortyapi.com/api/character',
+      params: {page: pageNumber},
     })
-      .then(res => {
-        setBooks(prevBooks => {
-          return [
-            ...new Set([...prevBooks, ...res.data.docs.map(b => b.title)]),
-          ]
+      .then(({data}) => {
+        data.results.map(result => {
+          result.isFavorite = favorites.find(({id}) => id === result.id)
+            ? true
+            : false
         })
-        setHasMore(res.data.docs.length > 0)
+        // isFavorite = favorites.find(({id}) =>
+        //   id === data.results ? true : false,
+        // )
+
+        console.log('data.results:', data.results)
+
+        setCharacters(previousCharacter => {
+          return [...previousCharacter, ...data.results]
+        })
+        setHasMore(data.results.length > 0)
         setLoading(false)
       })
-      .catch(e => {
-        if (axios.isCancel(e)) return
+      .catch(error => {
         setError(true)
+        setLoading(false)
+        console.log(error)
       })
-    return () => cancel()
-  }, [query, pageNumber])
-
-  return {loading, error, books, hasMore}
+  }, [pageNumber])
+  return {loading, error, characters, hasMore}
 }

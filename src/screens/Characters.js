@@ -2,9 +2,9 @@ import React from 'react'
 import axios from 'axios'
 import CharacterCard from '../components/CharacterCard'
 import {Spinner} from '../components/lib'
+import {useFetchInfinite} from '../utils/hooks'
 
 const loadingCharacter = {
-  id: '',
   image: '../../cover-image.svg',
   name: 'Loading...',
   status: 'loading...',
@@ -18,37 +18,16 @@ const loadingCharacters = Array.from({length: 20}, (v, index) => ({
   ...loadingCharacter,
 }))
 
-function CharactersScreen({onDelete}) {
-  const [pageNumber, setPageNumber] = React.useState(0)
-  const [loading, setLoading] = React.useState(true)
-  const [error, setError] = React.useState(false)
-  const [characters, setCharacters] = React.useState([])
-  const [hasMore, setHasMore] = React.useState(false)
-
-  React.useEffect(() => {
-    setLoading(true)
-    setError(false)
-    axios({
-      method: 'GET',
-      url: 'https://rickandmortyapi.com/api/character',
-      params: {page: pageNumber},
-    })
-      .then(response => {
-        setCharacters(previousCharacter => {
-          return [...previousCharacter, ...response.data.results]
-        })
-        setHasMore(response.data.results.length > 0)
-        setLoading(false)
-      })
-      .catch(error => {
-        setError(true)
-      })
-  }, [pageNumber])
+function CharactersScreen({onDelete, favorites, onAdd}) {
+  const [pageNumber, setPageNumber] = React.useState(1)
+  const {loading, error, characters, hasMore} = useFetchInfinite(
+    favorites,
+    `character/?page=${pageNumber}`,
+  )
 
   const observer = React.useRef()
   const lastCharacterElementRef = React.useCallback(
     node => {
-      console.log(node)
       if (loading) return
       if (observer.current) observer.current.disconnect()
       observer.current = new IntersectionObserver(entries => {
@@ -74,17 +53,27 @@ function CharactersScreen({onDelete}) {
             if (characters.length === index + 1) {
               return (
                 <li
+                  key={`${character.id}`}
                   ref={lastCharacterElementRef}
-                  key={character.id}
                   aria-label={character.name}
                 >
-                  <CharacterCard character={character} onDelete={onDelete} />
+                  <CharacterCard
+                    character={character}
+                    favorites={favorites}
+                    onDelete={onDelete}
+                    onAdd={onAdd}
+                  />
                 </li>
               )
             } else {
               return (
                 <li key={character.id} aria-label={character.name}>
-                  <CharacterCard character={character} onDelete={onDelete} />
+                  <CharacterCard
+                    character={character}
+                    favorites={favorites}
+                    onDelete={onDelete}
+                    onAdd={onAdd}
+                  />
                 </li>
               )
             }
@@ -105,7 +94,8 @@ function CharactersScreen({onDelete}) {
           <ul className="character-list">
             {loadingCharacters.map((character, index) => (
               <li key={character.id} aria-label={character.name}>
-                <CharacterCard character={character} onDelete={onDelete} />
+                {character.id}
+                <CharacterCard character={character} />
               </li>
             ))}
           </ul>

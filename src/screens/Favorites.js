@@ -8,11 +8,9 @@ function FavoritesScreen({favorites, onDelete}) {
       {favorites?.length ? (
         <ul className="character-list">
           {favorites.map(character => (
-            <ul className="character-list">
-              <li key={character.id} aria-label={character.name}>
-                <CharacterCard character={character} onDelete={onDelete} />
-              </li>
-            </ul>
+            <li key={character.id} aria-label={character.name}>
+              <CharacterCard character={character} onDelete={onDelete} />
+            </li>
           ))}
         </ul>
       ) : (

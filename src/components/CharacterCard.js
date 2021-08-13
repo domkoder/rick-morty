@@ -2,8 +2,18 @@ import React from 'react'
 import {FaPlusCircle, FaMinusCircle} from 'react-icons/fa'
 import {Link} from 'react-router-dom'
 
-function CharacterCard({character, onDelete}) {
-  const {id, image, name, status, species, gender} = character
+function CharacterCard({character, onDelete, onAdd}) {
+  const {id, image, name, status, species, gender, isFavorite} = character
+  // console.log(favorites)
+
+  // const isFavorite = favorites.forEach(favorite => {
+  //   return favorite.id === id ? true : false
+  // })
+
+  // const isFavorite = (id, favorites) => {
+  //   favorites.filter(favorite => favorite.id === id)
+  // }
+
   return (
     <div className="card profile">
       <Link className="profile__body" to={`/character/${id}`}>
@@ -20,14 +30,25 @@ function CharacterCard({character, onDelete}) {
         </div>
       </Link>
       <div className="profile__footer">
-        <button
-          className="profile__action"
-          aria-label="Add to list"
-          data-state="tooltip-hidden"
-          onClick={() => onDelete(character.id)}
-        >
-          <FaMinusCircle style={{color: '#ef5350'}} />
-        </button>
+        {isFavorite ? (
+          <button
+            className="profile__action"
+            aria-label="Add to list"
+            data-state="tooltip-hidden"
+            onClick={() => onDelete(character.id)}
+          >
+            <FaMinusCircle style={{color: '#ef5350'}} />
+          </button>
+        ) : (
+          <button
+            className="profile__action"
+            aria-label="Add to list"
+            data-state="tooltip-hidden"
+            onClick={() => onAdd(character)}
+          >
+            <FaPlusCircle style={{color: '#2e6ae7'}} />
+          </button>
+        )}
       </div>
     </div>
   )
