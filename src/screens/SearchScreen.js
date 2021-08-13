@@ -2,7 +2,6 @@ import React from 'react'
 import axios from 'axios'
 import CharacterCard from '../components/CharacterCard'
 import {Spinner} from '../components/lib'
-import {useFetchInfinite} from '../utils/hooks'
 
 const loadingCharacter = {
   image: '../../cover-image.svg',
@@ -18,25 +17,29 @@ const loadingCharacters = Array.from({length: 20}, (v, index) => ({
   ...loadingCharacter,
 }))
 
-function CharactersScreen({onDelete, favorites, onAdd}) {
-  const [pageNumber, setPageNumber] = React.useState(1)
-
-  // const {loading, error, characters, hasMore} = useFetchInfinite(
-  //   favorites,
-  //   `character/?page=${pageNumber}`,
-  // )
+function SearchScreen({query, queried, favorites, onDelete, onAdd}) {
+  // const {data, error, run, isLoading, isError, isSuccess} = useAsync()
 
   const [loading, setLoading] = React.useState(true)
   const [error, setError] = React.useState(false)
   const [characters, setCharacters] = React.useState([])
   const [hasMore, setHasMore] = React.useState(false)
+  const [pageNumber, setPageNumber] = React.useState(1)
+
+  React.useEffect(() => {
+    setCharacters([])
+    setPageNumber(1)
+  }, [query])
 
   React.useEffect(() => {
     setLoading(true)
     setError(false)
+    console.log('query:', query)
     axios({
       method: 'GET',
-      url: `https://rickandmortyapi.com/api/character/?page=${pageNumber}`,
+      url: `https://rickandmortyapi.com/api/character/?page=${pageNumber}&name=${encodeURIComponent(
+        query,
+      )}`,
     })
       .then(({data}) => {
         data.results.map(result => {
@@ -45,12 +48,11 @@ function CharactersScreen({onDelete, favorites, onAdd}) {
             : 'false')
         })
 
-        console.log('data.results:', data.results)
-
         setCharacters(previousCharacter => {
           return [...previousCharacter, ...data.results]
         })
-        setHasMore(data.results.length > 0)
+        console.log('data.results.length:', data.results.length)
+        setHasMore(data.results.length > 20)
         setLoading(false)
       })
       .catch(error => {
@@ -58,8 +60,7 @@ function CharactersScreen({onDelete, favorites, onAdd}) {
         setLoading(false)
         console.log(error)
       })
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pageNumber])
+  }, [pageNumber, query])
 
   const changeIsFavorite = (id, isFavorite) => {
     setCharacters(
@@ -78,6 +79,7 @@ function CharactersScreen({onDelete, favorites, onAdd}) {
       if (observer.current) observer.current.disconnect()
       observer.current = new IntersectionObserver(entries => {
         if (entries[0].isIntersecting && hasMore) {
+          // console.log(hasMore)
           setPageNumber(prevPageNumber => prevPageNumber + 1)
         }
       })
@@ -88,53 +90,52 @@ function CharactersScreen({onDelete, favorites, onAdd}) {
 
   return (
     <div>
-      <div className="text-container">
-        <p>Welcome to the character page.</p>
-        <p>Here, let me load a few characters for you...</p>
-        <p>Here you go! Find more characters with the search bar above.</p>
-      </div>
-      {characters?.length ? (
-        <ul className="character-list">
-          {characters.map((character, index) => {
-            if (characters.length === index + 1) {
-              return (
-                <li
-                  key={`${character.id}`}
-                  ref={lastCharacterElementRef}
-                  aria-label={character.name}
-                >
-                  <CharacterCard
-                    character={character}
-                    favorites={favorites}
-                    onDelete={onDelete}
-                    onAdd={onAdd}
-                    changeIsFavorite={changeIsFavorite}
-                  />
-                </li>
-              )
-            } else {
-              return (
-                <li key={character.id} aria-label={character.name}>
-                  <CharacterCard
-                    character={character}
-                    favorites={favorites}
-                    onDelete={onDelete}
-                    onAdd={onAdd}
-                    changeIsFavorite={changeIsFavorite}
-                    cardType="test"
-                  />
-                </li>
-              )
-            }
-          })}
-        </ul>
-      ) : null}
-
       {error ? (
         <div className="danger">
           <p>There was an error:</p>
           <pre>{error.error}</pre>
         </div>
+      ) : null}
+
+      {!loading ? (
+        characters?.length ? (
+          <ul className="character-list">
+            {characters.map((character, index) => {
+              if (characters.length === index + 1) {
+                return (
+                  <li
+                    key={`${character.id}`}
+                    ref={lastCharacterElementRef}
+                    aria-label={character.name}
+                  >
+                    <CharacterCard
+                      character={character}
+                      favorites={favorites}
+                      onDelete={onDelete}
+                      onAdd={onAdd}
+                      changeIsFavorite={changeIsFavorite}
+                    />
+                  </li>
+                )
+              } else {
+                return (
+                  <li key={character.id} aria-label={character.name}>
+                    <CharacterCard
+                      character={character}
+                      favorites={favorites}
+                      onDelete={onDelete}
+                      onAdd={onAdd}
+                      changeIsFavorite={changeIsFavorite}
+                      cardType="test"
+                    />
+                  </li>
+                )
+              }
+            })}
+          </ul>
+        ) : (
+          <p>No character found. Try another search.</p>
+        )
       ) : null}
 
       {loading ? (
@@ -153,4 +154,4 @@ function CharactersScreen({onDelete, favorites, onAdd}) {
   )
 }
 
-export {CharactersScreen}
+export default SearchScreen

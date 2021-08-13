@@ -1,5 +1,5 @@
 import React from 'react'
-import {FaPlusCircle, FaMinusCircle} from 'react-icons/fa'
+import {FaPlusCircle, FaMinusCircle, FaHeart} from 'react-icons/fa'
 import {Link} from 'react-router-dom'
 
 function CharacterCard({
@@ -28,7 +28,8 @@ function CharacterCard({
         </figure>
         <div className="profile__info">
           <h2 id="" className="profile__header">
-            {`${name}`}
+            {`${name}`} <br />
+            {isFavorite === 'true' ? <FaHeart className="like" /> : null}
           </h2>
           <div className="">status: {`${status}`}</div>
           <div className="">gender: {`${gender}`}</div>

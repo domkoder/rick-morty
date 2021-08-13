@@ -32,4 +32,4 @@ function FavoritesScreen({favorites, onDelete}) {
   )
 }
 
-export {FavoritesScreen}
+export default FavoritesScreen

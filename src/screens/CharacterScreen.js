@@ -2,7 +2,7 @@ import React from 'react'
 import {useParams} from 'react-router-dom'
 import {client} from '../utils/client'
 import {useAsync} from '../utils/hooks'
-import {FaPlusCircle, FaMinusCircle} from 'react-icons/fa'
+import {FaPlusCircle, FaMinusCircle, FaHeart} from 'react-icons/fa'
 import axios from 'axios'
 import {useFetchCharacter} from '../utils/hooks'
 
@@ -69,7 +69,8 @@ function CharacterScreen({onDelete, onAdd, favorites}) {
           </figure>
           <div className="profile__info">
             <h2 id="" className="profile__header">
-              {`${name}`}
+              {`${name}`} <br />
+              {isFavorite === 'true' ? <FaHeart className="like" /> : null}
             </h2>
             <div className="">status: {`${status}`}</div>
             <div className="">species: {`${species}`}</div>
@@ -116,4 +117,4 @@ function CharacterScreen({onDelete, onAdd, favorites}) {
   )
 }
 
-export {CharacterScreen}
+export default CharacterScreen
