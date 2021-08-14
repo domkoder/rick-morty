@@ -1,8 +1,9 @@
 import React from 'react'
-import {NavLink} from 'react-router-dom'
-import RadioButton from '../components/RadioButton'
+import {NavLink, useLocation} from 'react-router-dom'
+import FilterBox from '../components/FilterBox'
 
-function Aside() {
+function Aside({handleChangeFilters, filters}) {
+  const location = useLocation()
   return (
     <aside className="sidebar">
       <nav className="nav card">
@@ -27,35 +28,15 @@ function Aside() {
             </NavLink>
           </li>
         </ul>
-        <FilterBox />
+        {location.pathname === '/characters' ||
+        location.pathname === '/search' ? (
+          <FilterBox
+            handleChangeFilters={handleChangeFilters}
+            filters={filters}
+          />
+        ) : null}
       </nav>
     </aside>
-  )
-}
-
-function FilterBox(params) {
-  return (
-    <div>
-      <div className="nav__item">Filter by:</div>
-      <fieldset>
-        <legend>STATUS</legend>
-
-        <RadioButton name="status" value="alive" label="Alive" />
-        <RadioButton name="status" label="Dead" />
-        <RadioButton name="status" label="Unknown" />
-      </fieldset>
-
-      <fieldset>
-        <legend>GENDER</legend>
-        <RadioButton name="gender" value="female" label="Female" />
-        <RadioButton name="gender" value="male" label="Male" />
-        <RadioButton name="gender" value="genderless" label="Genderless" />
-        <RadioButton name="gender" value="unknown" label="Unknown" />
-      </fieldset>
-      <div>
-        <RadioButton label="SPECIES" />
-      </div>
-    </div>
   )
 }
 

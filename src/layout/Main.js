@@ -14,6 +14,7 @@ function Main({
   handleSearchSubmit,
   query,
   queried,
+  handleChangeFilters,
 }) {
   return (
     <main className="main">

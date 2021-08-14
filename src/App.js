@@ -7,10 +7,20 @@ import Aside from './layout/Aside'
 function App() {
   const [query, setQuery] = React.useState('')
   const [queried, setQueried] = React.useState(false)
-  const [filters, setFilters] = React.useState({})
+  const [filters, setFilters] = React.useState({
+    status: '',
+    gender: '',
+    species: true,
+  })
   const [favorites, setFavorites] = useLocalStorageState('favorites-list', [])
 
-  function handleChangeFilters(event) {}
+  function handleChangeFilters({target}) {
+    console.log(target.name)
+    console.log(target.value)
+    setFilters({...filters, [target.name]: target.value})
+  }
+
+  console.log(filters)
 
   // handle search form submit
   function handleSearchSubmit(value) {
@@ -32,7 +42,7 @@ function App() {
 
   return (
     <div className="container">
-      <Aside />
+      <Aside handleChangeFilters={handleChangeFilters} filters={filters} />
       <Main
         onDelete={deleteFavorite}
         onAdd={addFavorite}
