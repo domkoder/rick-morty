@@ -15,6 +15,7 @@ function Main({
   query,
   queried,
   handleChangeFilters,
+  filters,
 }) {
   return (
     <main className="main">
@@ -27,6 +28,7 @@ function Main({
               onDelete={onDelete}
               onAdd={onAdd}
               favorites={favorites}
+              filters={filters}
             />
           )}
         />
@@ -50,6 +52,7 @@ function Main({
               onDelete={onDelete}
               onAdd={onAdd}
               favorites={favorites}
+              filters={filters}
             />
           )}
         />

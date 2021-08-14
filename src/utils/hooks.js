@@ -110,47 +110,47 @@ function useLocalStorageState(
   return [state, setState]
 }
 
-function useFetchInfinite(favorites, endpoint) {
-  const [loading, setLoading] = React.useState(true)
-  const [error, setError] = React.useState(false)
-  const [characters, setCharacters] = React.useState([])
-  const [hasMore, setHasMore] = React.useState(false)
-  const apiURL = `https://rickandmortyapi.com/api`
+// function useFetchInfinite(favorites, endpoint) {
+//   const [loading, setLoading] = React.useState(true)
+//   const [error, setError] = React.useState(false)
+//   const [characters, setCharacters] = React.useState([])
+//   const [hasMore, setHasMore] = React.useState(false)
+//   const apiURL = `https://rickandmortyapi.com/api`
 
-  React.useEffect(() => {
-    setCharacters([])
-  }, [])
+//   React.useEffect(() => {
+//     setCharacters([])
+//   }, [])
 
-  React.useEffect(() => {
-    setLoading(true)
-    setError(false)
-    axios({
-      method: 'GET',
-      url: `${apiURL}/${endpoint}`,
-    })
-      .then(({data}) => {
-        data.results.map(result => {
-          return (result.isFavorite = favorites.find(({id}) => id === result.id)
-            ? true
-            : false)
-        })
+//   React.useEffect(() => {
+//     setLoading(true)
+//     setError(false)
+//     axios({
+//       method: 'GET',
+//       url: `${apiURL}/${endpoint}`,
+//     })
+//       .then(({data}) => {
+//         data.results.map(result => {
+//           return (result.isFavorite = favorites.find(({id}) => id === result.id)
+//             ? true
+//             : false)
+//         })
 
-        console.log('data.results:', data.results)
+//         console.log('data.results:', data.results)
 
-        setCharacters(previousCharacter => {
-          return [...previousCharacter, ...data.results]
-        })
-        setHasMore(data.results.length > 0)
-        setLoading(false)
-      })
-      .catch(error => {
-        setError(true)
-        setLoading(false)
-        console.log(error)
-      })
-  }, [endpoint])
-  return {loading, error, characters, hasMore}
-}
+//         setCharacters(previousCharacter => {
+//           return [...previousCharacter, ...data.results]
+//         })
+//         setHasMore(data.results.length > 0)
+//         setLoading(false)
+//       })
+//       .catch(error => {
+//         setError(true)
+//         setLoading(false)
+//         console.log(error)
+//       })
+//   }, [endpoint])
+//   return {loading, error, characters, hasMore}
+// }
 
 function useFetchCharacter(favorites, endpoint) {
   const [character, setCharacter] = React.useState(null)
@@ -169,9 +169,12 @@ function useFetchCharacter(favorites, endpoint) {
         console.log(favorites)
         setCharacter(data)
       })
-      .catch(error => {})
+      .catch(error => {
+        setError(true)
+      })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [endpoint])
   return {error, character}
 }
 
-export {useAsync, useLocalStorageState, useFetchInfinite, useFetchCharacter}
+export {useAsync, useLocalStorageState, useFetchCharacter}

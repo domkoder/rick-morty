@@ -1,7 +1,6 @@
 import React from 'react'
-import {FaSearch, FaTimes} from 'react-icons/fa'
+import {FaSearch} from 'react-icons/fa'
 import {Link} from 'react-router-dom'
-import Spinner from './Spinner'
 
 function SearchForm({handleSearchSubmit}) {
   const [value, setValue] = React.useState('')
@@ -26,7 +25,7 @@ function SearchForm({handleSearchSubmit}) {
             to="/search"
             onClick={() => {
               handleSearchSubmit(value)
-              setValue('')
+              // setValue('')
             }}
           >
             <button className="search-form__button" type="submit">

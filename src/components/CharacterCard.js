@@ -1,5 +1,5 @@
 import React from 'react'
-import {FaPlusCircle, FaMinusCircle, FaHeart} from 'react-icons/fa'
+import {FaHeart} from 'react-icons/fa'
 import {Link} from 'react-router-dom'
 import CircleButton from '../components/CircleButton'
 
@@ -11,16 +11,6 @@ function CharacterCard({
   cardType,
 }) {
   const {id, image, name, status, species, gender, isFavorite} = character
-  // console.log(favorites)
-
-  // const isFavorite = favorites.forEach(favorite => {
-  //   return favorite.id === id ? true : false
-  // })
-
-  // const isFavorite = (id, favorites) => {
-  //   favorites.filter(favorite => favorite.id === id)
-  // }
-
   return (
     <div className="card profile">
       <Link className="profile__body" to={`/character/${id}`}>

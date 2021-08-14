@@ -7,24 +7,16 @@ import Aside from './layout/Aside'
 function App() {
   const [query, setQuery] = React.useState('')
   const [queried, setQueried] = React.useState(false)
-  const [filters, setFilters] = React.useState({
-    status: '',
-    gender: '',
-    species: true,
-  })
+  const [filters, setFilters] = useLocalStorageState('filters', {})
   const [favorites, setFavorites] = useLocalStorageState('favorites-list', [])
 
   function handleChangeFilters({target}) {
-    console.log(target.name)
-    console.log(target.value)
+    // const filtersCopy = [...filters]
     setFilters({...filters, [target.name]: target.value})
   }
 
-  console.log(filters)
-
   // handle search form submit
   function handleSearchSubmit(value) {
-    console.log(value)
     setQueried(true)
     setQuery(value)
   }
@@ -50,6 +42,7 @@ function App() {
         handleSearchSubmit={handleSearchSubmit}
         query={query}
         queried={queried}
+        filters={filters}
       />
     </div>
   )

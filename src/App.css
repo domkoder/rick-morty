@@ -205,6 +205,11 @@ body {
   position: absolute;
   top: 12px;
   right: 6px;
+  cursor: pointer;
+}
+
+.search-form__label::hover {
+  cursor: pointer;
 }
 
 .character-list {
@@ -261,6 +266,7 @@ body {
 .tooltip {
   position: relative;
   display: inline-block;
+  cursor: pointer;
 }
 
 .tooltip__text {
@@ -281,6 +287,7 @@ body {
 
 .tooltip:hover .tooltip__text {
   visibility: visible;
+  cursor: pointer;
 }
 
 .checkbox {

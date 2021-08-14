@@ -2,9 +2,9 @@ import React from 'react'
 import {useParams} from 'react-router-dom'
 import {client} from '../utils/client'
 import {useAsync} from '../utils/hooks'
-import {FaPlusCircle, FaMinusCircle, FaHeart} from 'react-icons/fa'
+import {FaHeart} from 'react-icons/fa'
 import axios from 'axios'
-import {useFetchCharacter} from '../utils/hooks'
+import CircleButton from '../components/CircleButton'
 
 const loadingCharacter = {
   image: '../../cover-image.svg',
@@ -20,7 +20,7 @@ const loadingCharacter = {
   isFavorite: '',
 }
 
-function CharacterScreen({onDelete, onAdd, favorites}) {
+function CharacterScreen({onDelete, onAdd, favorites, filters}) {
   const {id} = useParams()
   // const {character} = useFetchCharacter(favorites, `character/${id}`)
   const [character, setCharacter] = React.useState(null)
@@ -85,31 +85,23 @@ function CharacterScreen({onDelete, onAdd, favorites}) {
           {/* isFavorite */}
 
           {isFavorite === 'true' ? (
-            <button
-              className="profile__action tooltip"
-              aria-label="Remove favorite"
-              data-state="tooltip-hidden"
-              onClick={() => {
+            <CircleButton
+              label="Remove favorite"
+              variance="remove"
+              update={() => {
                 onDelete(id)
                 changeIsFavorite('false')
               }}
-            >
-              <span className="tooltip__text">Remove favorite</span>
-              <FaMinusCircle style={{color: '#ef5350'}} />
-            </button>
+            />
           ) : isFavorite === 'false' ? (
-            <button
-              className="profile__action tooltip"
-              aria-label="Add favorite"
-              data-state="tooltip-hidden"
-              onClick={() => {
+            <CircleButton
+              label="Add favorite"
+              variance="add"
+              update={() => {
                 onAdd(character)
                 changeIsFavorite('true')
               }}
-            >
-              <span className="tooltip__text">Add favorite</span>
-              <FaPlusCircle style={{color: '#2e6ae7'}} />
-            </button>
+            />
           ) : null}
         </div>
       </div>

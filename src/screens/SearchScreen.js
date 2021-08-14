@@ -5,7 +5,7 @@ import LoadingCharacters from '../components/LoadingCharacters'
 import Error from '../components/Error'
 // import {useFetchInfinite} from '../utils/hooks'
 
-function SearchScreen({query, queried, favorites, onDelete, onAdd}) {
+function SearchScreen({query, queried, favorites, onDelete, onAdd, filters}) {
   // const {loading, error, characters, hasMore} = useFetchInfinite(
   //   favorites,
   //   `character/?page=${pageNumber}`,
@@ -20,7 +20,7 @@ function SearchScreen({query, queried, favorites, onDelete, onAdd}) {
   React.useEffect(() => {
     setCharacters([])
     setPageNumber(1)
-  }, [query])
+  }, [query, filters.status, filters.gender, filters.species])
 
   React.useEffect(() => {
     if (!query) {
@@ -29,12 +29,12 @@ function SearchScreen({query, queried, favorites, onDelete, onAdd}) {
 
     setLoading(true)
     setError(false)
-
     axios({
       method: 'GET',
       url: `https://rickandmortyapi.com/api/character/?page=${pageNumber}&name=${encodeURIComponent(
         query,
       )}`,
+      params: filters,
     })
       .then(({data}) => {
         data.results.map(result => {
@@ -56,7 +56,7 @@ function SearchScreen({query, queried, favorites, onDelete, onAdd}) {
         console.log(error)
       })
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pageNumber, query])
+  }, [pageNumber, query, filters.status, filters.gender, filters.species])
 
   const changeIsFavorite = (id, isFavorite) => {
     setCharacters(

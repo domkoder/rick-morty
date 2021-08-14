@@ -5,7 +5,7 @@ import LoadingCharacters from '../components/LoadingCharacters'
 import Error from '../components/Error'
 // import {useFetchInfinite} from '../utils/hooks'
 
-function CharactersScreen({onDelete, favorites, onAdd}) {
+function CharactersScreen({onDelete, favorites, onAdd, filters}) {
   // const {loading, error, characters, hasMore} = useFetchInfinite(
   //   favorites,
   //   `character/?page=${pageNumber}`,
@@ -18,12 +18,18 @@ function CharactersScreen({onDelete, favorites, onAdd}) {
   const [pageNumber, setPageNumber] = React.useState(1)
 
   React.useEffect(() => {
+    setCharacters([])
+    setPageNumber(1)
+  }, [filters.status, filters.gender, filters.species])
+
+  React.useEffect(() => {
     setLoading(true)
     setError(false)
 
     axios({
       method: 'GET',
       url: `https://rickandmortyapi.com/api/character/?page=${pageNumber}`,
+      params: filters,
     })
       .then(({data}) => {
         data.results.map(result => {
@@ -46,7 +52,7 @@ function CharactersScreen({onDelete, favorites, onAdd}) {
         console.log(error)
       })
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pageNumber])
+  }, [pageNumber, filters.status, filters.gender, filters.species])
 
   const changeIsFavorite = (id, isFavorite) => {
     setCharacters(

@@ -1,4 +1,4 @@
-import {FaPlusCircle, FaMinusCircle, FaHeart} from 'react-icons/fa'
+import {FaPlusCircle, FaMinusCircle} from 'react-icons/fa'
 
 function CircleButton({label, variance, update}) {
   return (
