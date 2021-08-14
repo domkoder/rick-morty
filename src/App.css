@@ -265,7 +265,7 @@ body {
 
 .tooltip__text {
   visibility: hidden;
-  width: 120px;
+  width: 140px;
   background-color: #f1f2f7;
   color: #5a5b5f;
   border: 1px solid #5a5b5f;
@@ -275,7 +275,7 @@ body {
   position: absolute;
   z-index: 1;
   top: -31px;
-  left: -212%;
+  left: -220%;
   font-size: 0.9em;
 }
 

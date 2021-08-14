@@ -1,26 +1,11 @@
 import React from 'react'
 import axios from 'axios'
-import CharacterCard from '../components/CharacterCard'
-import {Spinner} from '../components/lib'
+import CharacterCardList from '../components/CharacterCardList'
+import LoadingCharacters from '../components/LoadingCharacters'
+import Error from '../components/Error'
 // import {useFetchInfinite} from '../utils/hooks'
 
-const loadingCharacter = {
-  image: '../../cover-image.svg',
-  name: 'Loading...',
-  status: 'loading...',
-  species: 'loading...',
-  gender: 'Loading...',
-  loadingCharacter: true,
-}
-
-const loadingCharacters = Array.from({length: 20}, (v, index) => ({
-  id: `loading-book-${index}`,
-  ...loadingCharacter,
-}))
-
 function CharactersScreen({onDelete, favorites, onAdd}) {
-  const [pageNumber, setPageNumber] = React.useState(1)
-
   // const {loading, error, characters, hasMore} = useFetchInfinite(
   //   favorites,
   //   `character/?page=${pageNumber}`,
@@ -30,10 +15,12 @@ function CharactersScreen({onDelete, favorites, onAdd}) {
   const [error, setError] = React.useState(null)
   const [characters, setCharacters] = React.useState([])
   const [hasMore, setHasMore] = React.useState(false)
+  const [pageNumber, setPageNumber] = React.useState(1)
 
   React.useEffect(() => {
     setLoading(true)
-    // setError(false)
+    setError(false)
+
     axios({
       method: 'GET',
       url: `https://rickandmortyapi.com/api/character/?page=${pageNumber}`,
@@ -93,62 +80,18 @@ function CharactersScreen({onDelete, favorites, onAdd}) {
         <p>Here, let me load a few characters for you...</p>
         <p>Here you go! Find more characters with the search bar above.</p>
       </div>
+      {error ? <Error error={error} /> : null}
       {characters?.length ? (
-        <ul className="character-list">
-          {characters.map((character, index) => {
-            if (characters.length === index + 1) {
-              return (
-                <li
-                  key={`${character.id}`}
-                  ref={lastCharacterElementRef}
-                  aria-label={character.name}
-                >
-                  <CharacterCard
-                    character={character}
-                    favorites={favorites}
-                    onDelete={onDelete}
-                    onAdd={onAdd}
-                    changeIsFavorite={changeIsFavorite}
-                  />
-                </li>
-              )
-            } else {
-              return (
-                <li key={character.id} aria-label={character.name}>
-                  <CharacterCard
-                    character={character}
-                    favorites={favorites}
-                    onDelete={onDelete}
-                    onAdd={onAdd}
-                    changeIsFavorite={changeIsFavorite}
-                    cardType="test"
-                  />
-                </li>
-              )
-            }
-          })}
-        </ul>
+        <CharacterCardList
+          onDelete={onDelete}
+          favorites={favorites}
+          onAdd={onAdd}
+          characters={characters}
+          lastCharacterElementRef={lastCharacterElementRef}
+          changeIsFavorite={changeIsFavorite}
+        />
       ) : null}
-
-      {error ? (
-        <div className="danger">
-          <p>There was an error:</p>
-          <pre>{error.error}</pre>
-        </div>
-      ) : null}
-
-      {loading ? (
-        <div>
-          <Spinner className="spinner-center" />
-          <ul className="character-list">
-            {loadingCharacters.map((character, index) => (
-              <li key={character.id} aria-label={character.name}>
-                <CharacterCard character={character} />
-              </li>
-            ))}
-          </ul>
-        </div>
-      ) : null}
+      {loading ? <LoadingCharacters /> : null}
     </div>
   )
 }

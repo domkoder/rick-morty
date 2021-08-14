@@ -1,9 +1,9 @@
 import React from 'react'
-import {Spinner} from '../components/lib'
 import {FaSearch, FaTimes} from 'react-icons/fa'
 import {Link} from 'react-router-dom'
+import Spinner from './Spinner'
 
-function SearchForm({handleSearchSubmit, isLoading, isError}) {
+function SearchForm({handleSearchSubmit}) {
   const [value, setValue] = React.useState('')
   return (
     <div className="search">
@@ -30,13 +30,7 @@ function SearchForm({handleSearchSubmit, isLoading, isError}) {
             }}
           >
             <button className="search-form__button" type="submit">
-              {isLoading ? (
-                <Spinner />
-              ) : isError ? (
-                <FaTimes aria-label="error" className="danger" />
-              ) : (
-                <FaSearch aria-label="search" />
-              )}
+              <FaSearch aria-label="search" />
             </button>
           </Link>
         </label>

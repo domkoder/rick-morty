@@ -1,22 +1,12 @@
 import React from 'react'
 import {Link} from 'react-router-dom'
-import CharacterCard from '../components/CharacterCard'
+import CharacterCardList from '../components/CharacterCardList'
 
 function FavoritesScreen({favorites, onDelete}) {
   return (
     <div>
       {favorites?.length ? (
-        <ul className="character-list">
-          {favorites.map(character => (
-            <li key={character.id} aria-label={character.name}>
-              <CharacterCard
-                character={character}
-                onDelete={onDelete}
-                cardType="notTest"
-              />
-            </li>
-          ))}
-        </ul>
+        <CharacterCardList onDelete={onDelete} characters={favorites} />
       ) : (
         <div className="text-container">
           <p>

@@ -1,6 +1,7 @@
 import React from 'react'
 import {FaPlusCircle, FaMinusCircle, FaHeart} from 'react-icons/fa'
 import {Link} from 'react-router-dom'
+import CircleButton from '../components/CircleButton'
 
 function CharacterCard({
   character,
@@ -38,35 +39,27 @@ function CharacterCard({
       </Link>
       <div className="profile__footer tooltip">
         {isFavorite === 'true' ? (
-          <button
-            className="profile__action"
-            aria-label="Remove from list"
-            data-state="tooltip-hidden"
-            onClick={() => {
+          <CircleButton
+            label="Remove favorite"
+            variance="remove"
+            update={() => {
               onDelete(id)
               if (changeIsFavorite) {
                 changeIsFavorite(id, 'false')
               }
             }}
-          >
-            <span className="tooltip__text">Remove favorite</span>
-            <FaMinusCircle style={{color: '#ef5350'}} />
-          </button>
+          />
         ) : isFavorite === 'false' ? (
-          <button
-            className="profile__action tooltip"
-            aria-label="Add to list"
-            data-state="tooltip-hidden"
-            onClick={() => {
+          <CircleButton
+            label="Add favorite"
+            variance="add"
+            update={() => {
               onAdd(character)
               if (changeIsFavorite) {
                 changeIsFavorite(id, 'true')
               }
             }}
-          >
-            <span className="tooltip__text">Add favorite</span>
-            <FaPlusCircle style={{color: '#2e6ae7'}} />
-          </button>
+          />
         ) : null}
       </div>
     </div>
