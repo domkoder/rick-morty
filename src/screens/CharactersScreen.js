@@ -37,7 +37,7 @@ function CharactersScreen({onDelete, favorites, onAdd}) {
         setCharacters(previousCharacter => {
           return [...previousCharacter, ...data.results]
         })
-        setHasMore(data.results.length > 0)
+        setHasMore(data.results.length >= 20)
         setLoading(false)
       })
       .catch(error => {
@@ -65,6 +65,7 @@ function CharactersScreen({onDelete, favorites, onAdd}) {
       if (observer.current) observer.current.disconnect()
       observer.current = new IntersectionObserver(entries => {
         if (entries[0].isIntersecting && hasMore) {
+          console.log('hasMore: yes')
           setPageNumber(prevPageNumber => prevPageNumber + 1)
         }
       })

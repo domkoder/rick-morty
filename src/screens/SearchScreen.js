@@ -11,7 +11,7 @@ function SearchScreen({query, queried, favorites, onDelete, onAdd}) {
   //   `character/?page=${pageNumber}`,
   // )
 
-  const [loading, setLoading] = React.useState(true)
+  const [loading, setLoading] = React.useState(false)
   const [error, setError] = React.useState(false)
   const [characters, setCharacters] = React.useState([])
   const [hasMore, setHasMore] = React.useState(false)
@@ -47,7 +47,7 @@ function SearchScreen({query, queried, favorites, onDelete, onAdd}) {
           return [...previousCharacter, ...data.results]
         })
         console.log('data.results.length:', data.results.length)
-        setHasMore(data.results.length > 20)
+        setHasMore(data.results.length >= 20)
         setLoading(false)
       })
       .catch(error => {
@@ -75,7 +75,8 @@ function SearchScreen({query, queried, favorites, onDelete, onAdd}) {
       if (observer.current) observer.current.disconnect()
       observer.current = new IntersectionObserver(entries => {
         if (entries[0].isIntersecting && hasMore) {
-          // console.log(hasMore)
+          console.log('calling this function:', node)
+          console.log('hasMore:', hasMore)
           setPageNumber(prevPageNumber => prevPageNumber + 1)
         }
       })
