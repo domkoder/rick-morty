@@ -5,7 +5,6 @@ import Error from '../components/Error'
 import {useFetchInfinite} from '../utils/hooks'
 
 function CharactersScreen({onDelete, favorites, onAdd, filters}) {
-  const [pageNumber, setPageNumber] = React.useState(1)
   const {
     loading,
     error,
@@ -13,12 +12,7 @@ function CharactersScreen({onDelete, favorites, onAdd, filters}) {
     characters,
     changeIsFavorite,
     lastCharacterElementRef,
-  } = useFetchInfinite({
-    favorites,
-    pageNumber,
-    filters,
-    setPageNumber,
-  })
+  } = useFetchInfinite(favorites, filters)
 
   // console.log(errorMessage)
 

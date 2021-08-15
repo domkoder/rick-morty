@@ -33,14 +33,8 @@ function useLocalStorageState(
 }
 
 // fetch characters for infinite scrolling
-function useFetchInfinite({
-  favorites,
-  endpoint = '',
-  pageNumber,
-  filters,
-  query = '',
-  setPageNumber,
-}) {
+function useFetchInfinite(favorites, filters) {
+  const [pageNumber, setPageNumber] = React.useState(1)
   const [loading, setLoading] = React.useState(true)
   const [error, setError] = React.useState(false)
   const [characters, setCharacters] = React.useState([])
@@ -51,12 +45,12 @@ function useFetchInfinite({
     setCharacters([])
     setPageNumber(1)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [query, filters.status, filters.gender, filters.species])
+  }, [filters.name, filters.status, filters.gender, filters.species])
 
   React.useEffect(() => {
     setLoading(true)
     setError(false)
-    client(`/?page=${pageNumber}`, filters)
+    client(`?page=${pageNumber}`, filters)
       .then(({data}) => {
         console.log('data:', data)
 
@@ -77,7 +71,13 @@ function useFetchInfinite({
         setLoading(false)
       })
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [query, pageNumber, filters.status, filters.gender, filters.species])
+  }, [
+    filters.name,
+    pageNumber,
+    filters.status,
+    filters.gender,
+    filters.species,
+  ])
 
   const changeIsFavorite = (id, isFavorite) => {
     setCharacters(
@@ -117,27 +117,28 @@ function useFetchInfinite({
 }
 
 // fetch a single character
-function useFetchCharacter(favorites, endpoint) {
+function useFetchCharacter(id, favorites) {
   const [character, setCharacter] = React.useState(null)
   const [error, setError] = React.useState(false)
 
   React.useEffect(() => {
-    axios({
-      method: 'GET',
-      url: `${apiURL}/${endpoint}`,
-    })
+    client(`${id}`)
       .then(({data}) => {
         data.isFavorite = favorites.find(({id}) => id === data.id)
-          ? true
-          : false
+          ? 'true'
+          : 'false'
         setCharacter(data)
       })
       .catch(error => {
         setError(true)
       })
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [endpoint])
-  return {error, character}
+  }, [id])
+
+  const changeIsFavorite = isFavorite => {
+    setCharacter({...character, isFavorite: isFavorite})
+  }
+  return {error, character, changeIsFavorite}
 }
 
 export {useLocalStorageState, useFetchInfinite, useFetchCharacter}

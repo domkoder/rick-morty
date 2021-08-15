@@ -1,7 +1,7 @@
 import React from 'react'
 import {useParams} from 'react-router-dom'
 import {FaHeart} from 'react-icons/fa'
-import axios from 'axios'
+import {useFetchCharacter} from '../utils/hooks'
 import CircleButton from '../components/CircleButton'
 import Error from '../components/Error'
 
@@ -19,26 +19,9 @@ const loadingCharacter = {
   isFavorite: '',
 }
 
-function CharacterScreen({onDelete, onAdd, favorites, filters}) {
+function CharacterScreen({onDelete, onAdd, favorites}) {
   const {id} = useParams()
-  // const {character} = useFetchCharacter(favorites, `character/${id}`)
-  const [character, setCharacter] = React.useState(null)
-  const [error, setError] = React.useState(null)
-
-  React.useEffect(() => {
-    axios({
-      method: 'GET',
-      url: `https://rickandmortyapi.com/api/character/${id}`,
-    })
-      .then(({data}) => {
-        data.isFavorite = favorites.find(({id}) => id === data.id)
-          ? 'true'
-          : 'false'
-        setCharacter(data)
-      })
-      .catch(error => setError(error))
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [id])
+  const {error, character, changeIsFavorite} = useFetchCharacter(id, favorites)
 
   const {
     image,
@@ -52,10 +35,6 @@ function CharacterScreen({onDelete, onAdd, favorites, filters}) {
     episode,
     isFavorite,
   } = character ?? loadingCharacter
-
-  const changeIsFavorite = isFavorite => {
-    setCharacter({...character, isFavorite: isFavorite})
-  }
 
   return (
     <div aria-label={name} style={{marginTop: '1.5em'}}>

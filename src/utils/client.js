@@ -1,5 +1,5 @@
 import axios from 'axios'
-const apiURL = `https://rickandmortyapi.com/api/character`
+const apiURL = `https://rickandmortyapi.com/api/character/`
 
 function client(endpoint, filters = {}) {
   console.log('working')
