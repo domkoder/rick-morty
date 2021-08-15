@@ -34,16 +34,50 @@ const gender = [
   },
 ]
 
-// const species = [
-//   {
-//     id: 1,
-//     value: 'yes',
-//   },
-//   {
-//     id: 2,
-//     value: 'no',
-//   },
-// ]
+const species = [
+  {
+    id: 1,
+    value: 'alien',
+  },
+  {
+    id: 2,
+    value: 'human',
+  },
+  {
+    id: 3,
+    value: 'humanoid',
+  },
+  {
+    id: 4,
+    value: 'robot',
+  },
+
+  {
+    id: 5,
+    value: 'poopybutthole',
+  },
+
+  {
+    id: 6,
+    value: 'mythological',
+  },
+  {
+    id: 7,
+    value: 'animal',
+  },
+  {
+    id: 8,
+    value: 'cronenberg',
+  },
+  {
+    id: 9,
+    value: 'disease',
+  },
+  {
+    id: 10,
+    value: 'unknown',
+  },
+]
 
 function FilterBox({handleChangeFilters, filters}) {
   return (
@@ -86,7 +120,7 @@ function FilterBox({handleChangeFilters, filters}) {
           </select>
         </div>
 
-        {/* <div>
+        <div>
           <label htmlFor="species">Species:</label>
           <select
             onChange={event => handleChangeFilters(event)}
@@ -101,7 +135,7 @@ function FilterBox({handleChangeFilters, filters}) {
               </option>
             ))}
           </select>
-        </div> */}
+        </div>
       </fieldset>
     </div>
   )

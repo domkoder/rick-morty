@@ -31,8 +31,6 @@ export default function useBookSearch(query, pageNumber, favorites) {
         //   id === data.results ? true : false,
         // )
 
-        console.log('data.results:', data.results)
-
         setCharacters(previousCharacter => {
           return [...previousCharacter, ...data.results]
         })
@@ -42,7 +40,6 @@ export default function useBookSearch(query, pageNumber, favorites) {
       .catch(error => {
         setError(true)
         setLoading(false)
-        console.log(error)
       })
   }, [pageNumber])
   return {loading, error, characters, hasMore}

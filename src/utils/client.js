@@ -1,18 +1,12 @@
-const apiURL = `https://rickandmortyapi.com/api`
+import axios from 'axios'
+const apiURL = `https://rickandmortyapi.com/api/character`
 
-function client(endpoint, customConfig = {}) {
-  const config = {
+function client(endpoint, filters = {}) {
+  console.log('working')
+  return axios({
     method: 'GET',
-    ...customConfig,
-  }
-
-  return window.fetch(`${apiURL}/${endpoint}`, config).then(async response => {
-    const data = await response.json()
-    if (response.ok) {
-      return data
-    } else {
-      return Promise.reject(data)
-    }
+    url: `${apiURL}/${endpoint}`,
+    params: filters,
   })
 }
 export {client}

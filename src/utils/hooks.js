@@ -1,88 +1,10 @@
 import * as React from 'react'
+import {client} from './client'
 import axios from 'axios'
 
-function useSafeDispatch(dispatch) {
-  const mounted = React.useRef(false)
-  React.useLayoutEffect(() => {
-    mounted.current = true
-    return () => (mounted.current = false)
-  }, [])
-  return React.useCallback(
-    (...args) => (mounted.current ? dispatch(...args) : void 0),
-    [dispatch],
-  )
-}
+const apiURL = `https://rickandmortyapi.com/api/character`
 
-// Example usage:
-// const {data, error, status, run} = useAsync()
-// React.useEffect(() => {
-//   run(fetchPokemon(pokemonName))
-// }, [pokemonName, run])
-const defaultInitialState = {status: 'idle', data: null, error: null}
-function useAsync(initialState) {
-  const initialStateRef = React.useRef({
-    ...defaultInitialState,
-    ...initialState,
-  })
-  const [{status, data, error}, setState] = React.useReducer(
-    (s, a) => ({...s, ...a}),
-    initialStateRef.current,
-  )
-
-  const safeSetState = useSafeDispatch(setState)
-
-  const setData = React.useCallback(
-    data => safeSetState({data, status: 'resolved'}),
-    [safeSetState],
-  )
-  const setError = React.useCallback(
-    error => safeSetState({error, status: 'rejected'}),
-    [safeSetState],
-  )
-  const reset = React.useCallback(
-    () => safeSetState(initialStateRef.current),
-    [safeSetState],
-  )
-
-  const run = React.useCallback(
-    promise => {
-      if (!promise || !promise.then) {
-        throw new Error(
-          `The argument passed to useAsync().run must be a promise. Maybe a function that's passed isn't returning anything?`,
-        )
-      }
-      safeSetState({status: 'pending'})
-      return promise.then(
-        data => {
-          setData(data)
-          return data
-        },
-        error => {
-          setError(error)
-          // return Promise.reject(error)
-        },
-      )
-    },
-    [safeSetState, setData, setError],
-  )
-
-  return {
-    // using the same names that react-query uses for convenience
-    isIdle: status === 'idle',
-    isLoading: status === 'pending',
-    isError: status === 'rejected',
-    isSuccess: status === 'resolved',
-
-    setData,
-    setError,
-    error,
-    status,
-    data,
-    run,
-    reset,
-  }
-}
-
+// Set state to local storage with this hooks
 function useLocalStorageState(
   key,
   defaultValue = '',
@@ -110,52 +32,94 @@ function useLocalStorageState(
   return [state, setState]
 }
 
-// function useFetchInfinite(favorites, endpoint) {
-//   const [loading, setLoading] = React.useState(true)
-//   const [error, setError] = React.useState(false)
-//   const [characters, setCharacters] = React.useState([])
-//   const [hasMore, setHasMore] = React.useState(false)
-//   const apiURL = `https://rickandmortyapi.com/api`
+// fetch characters for infinite scrolling
+function useFetchInfinite({
+  favorites,
+  endpoint = '',
+  pageNumber,
+  filters,
+  query = '',
+  setPageNumber,
+}) {
+  const [loading, setLoading] = React.useState(true)
+  const [error, setError] = React.useState(false)
+  const [characters, setCharacters] = React.useState([])
+  const [hasMore, setHasMore] = React.useState(false)
+  const [errorMessage, setErrorMessage] = React.useState(null)
 
-//   React.useEffect(() => {
-//     setCharacters([])
-//   }, [])
+  React.useEffect(() => {
+    setCharacters([])
+    setPageNumber(1)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [query, filters.status, filters.gender, filters.species])
 
-//   React.useEffect(() => {
-//     setLoading(true)
-//     setError(false)
-//     axios({
-//       method: 'GET',
-//       url: `${apiURL}/${endpoint}`,
-//     })
-//       .then(({data}) => {
-//         data.results.map(result => {
-//           return (result.isFavorite = favorites.find(({id}) => id === result.id)
-//             ? true
-//             : false)
-//         })
+  React.useEffect(() => {
+    setLoading(true)
+    setError(false)
+    client(`/?page=${pageNumber}`, filters)
+      .then(({data}) => {
+        console.log('data:', data)
 
-//         console.log('data.results:', data.results)
+        data.results.map(result => {
+          return (result.isFavorite = favorites.find(({id}) => id === result.id)
+            ? 'true'
+            : 'false')
+        })
+        setCharacters(previousCharacter => {
+          return [...previousCharacter, ...data.results]
+        })
+        setHasMore(data.results.length >= 20)
+        setLoading(false)
+      })
+      .catch(errorResponse => {
+        setError(true)
+        console.log('errorResponse:', errorResponse)
+        setLoading(false)
+      })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [query, pageNumber, filters.status, filters.gender, filters.species])
 
-//         setCharacters(previousCharacter => {
-//           return [...previousCharacter, ...data.results]
-//         })
-//         setHasMore(data.results.length > 0)
-//         setLoading(false)
-//       })
-//       .catch(error => {
-//         setError(true)
-//         setLoading(false)
-//         console.log(error)
-//       })
-//   }, [endpoint])
-//   return {loading, error, characters, hasMore}
-// }
+  const changeIsFavorite = (id, isFavorite) => {
+    setCharacters(
+      characters.map(character =>
+        character.id === id
+          ? {...character, isFavorite: isFavorite}
+          : character,
+      ),
+    )
+  }
 
+  const observer = React.useRef()
+  const lastCharacterElementRef = React.useCallback(
+    node => {
+      if (loading || error) return
+      if (observer.current) observer.current.disconnect()
+      observer.current = new IntersectionObserver(entries => {
+        if (entries[0].isIntersecting && hasMore) {
+          setPageNumber(prevPageNumber => prevPageNumber + 1)
+        }
+      })
+      if (node) observer.current.observe(node)
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [error, hasMore, loading],
+  )
+
+  return {
+    loading,
+    errorMessage,
+    error,
+    characters,
+    hasMore,
+    changeIsFavorite,
+    lastCharacterElementRef,
+  }
+}
+
+// fetch a single character
 function useFetchCharacter(favorites, endpoint) {
   const [character, setCharacter] = React.useState(null)
   const [error, setError] = React.useState(false)
-  const apiURL = `https://rickandmortyapi.com/api`
 
   React.useEffect(() => {
     axios({
@@ -166,7 +130,6 @@ function useFetchCharacter(favorites, endpoint) {
         data.isFavorite = favorites.find(({id}) => id === data.id)
           ? true
           : false
-        console.log(favorites)
         setCharacter(data)
       })
       .catch(error => {
@@ -177,4 +140,4 @@ function useFetchCharacter(favorites, endpoint) {
   return {error, character}
 }
 
-export {useAsync, useLocalStorageState, useFetchCharacter}
+export {useLocalStorageState, useFetchInfinite, useFetchCharacter}

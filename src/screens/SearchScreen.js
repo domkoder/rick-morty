@@ -46,14 +46,12 @@ function SearchScreen({query, queried, favorites, onDelete, onAdd, filters}) {
         setCharacters(previousCharacter => {
           return [...previousCharacter, ...data.results]
         })
-        console.log('data.results.length:', data.results.length)
         setHasMore(data.results.length >= 20)
         setLoading(false)
       })
       .catch(error => {
         setError(true)
         setLoading(false)
-        console.log(error)
       })
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pageNumber, query, filters.status, filters.gender, filters.species])
@@ -71,24 +69,20 @@ function SearchScreen({query, queried, favorites, onDelete, onAdd, filters}) {
   const observer = React.useRef()
   const lastCharacterElementRef = React.useCallback(
     node => {
-      if (loading) return
+      if (loading || error) return
       if (observer.current) observer.current.disconnect()
       observer.current = new IntersectionObserver(entries => {
         if (entries[0].isIntersecting && hasMore) {
-          console.log('calling this function:', node)
-          console.log('hasMore:', hasMore)
           setPageNumber(prevPageNumber => prevPageNumber + 1)
         }
       })
       if (node) observer.current.observe(node)
     },
-    [hasMore, loading],
+    [error, hasMore, loading],
   )
 
   return (
     <div>
-      {error ? <Error error={error} /> : null}
-
       {!loading ? (
         characters?.length ? (
           <CharacterCardList
@@ -105,6 +99,7 @@ function SearchScreen({query, queried, favorites, onDelete, onAdd, filters}) {
       ) : null}
 
       {loading ? <LoadingCharacters /> : null}
+      {error ? <Error error={error} /> : null}
     </div>
   )
 }

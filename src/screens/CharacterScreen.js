@@ -1,10 +1,9 @@
 import React from 'react'
 import {useParams} from 'react-router-dom'
-import {client} from '../utils/client'
-import {useAsync} from '../utils/hooks'
 import {FaHeart} from 'react-icons/fa'
 import axios from 'axios'
 import CircleButton from '../components/CircleButton'
+import Error from '../components/Error'
 
 const loadingCharacter = {
   image: '../../cover-image.svg',
@@ -35,13 +34,11 @@ function CharacterScreen({onDelete, onAdd, favorites, filters}) {
         data.isFavorite = favorites.find(({id}) => id === data.id)
           ? 'true'
           : 'false'
-        // console.log(favorites)
         setCharacter(data)
       })
       .catch(error => setError(error))
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id])
-  console.log('character:', character)
 
   const {
     image,
@@ -105,6 +102,7 @@ function CharacterScreen({onDelete, onAdd, favorites, filters}) {
           ) : null}
         </div>
       </div>
+      {error ? <Error error={error} /> : null}
     </div>
   )
 }
