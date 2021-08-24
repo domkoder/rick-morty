@@ -3,17 +3,16 @@ import {FaSearch} from 'react-icons/fa'
 import {Link} from 'react-router-dom'
 
 function SearchForm({handleSearchSubmit}) {
-  const [value, setValue] = React.useState('')
+  // const [value, setValue] = React.useState('')
   return (
     <div className="search">
-      <form className="search-form">
+      <form onSubmit={handleSearchSubmit} className="search-form">
         <input
           className="search-form__input"
           placeholder="Search characters..."
           id="search"
           type="search"
-          value={value}
-          onChange={event => setValue(event.target.value)}
+          // onChange={event => setValue(event.target.value)}
         />
         <label
           className="search-form__label"
@@ -21,17 +20,17 @@ function SearchForm({handleSearchSubmit}) {
           data-state="tooltip-hidden"
           data-reach-tooltip-trigger=""
         >
-          <Link
+          {/* <Link
             to="/search"
             onClick={() => {
               handleSearchSubmit(value)
-              // setValue('')
+              setValue('')
             }}
-          >
-            <button className="search-form__button" type="submit">
-              <FaSearch aria-label="search" />
-            </button>
-          </Link>
+          > */}
+          <button className="search-form__button" type="submit">
+            <FaSearch aria-label="search" />
+          </button>
+          {/* </Link> */}
         </label>
       </form>
     </div>

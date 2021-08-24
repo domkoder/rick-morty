@@ -200,6 +200,7 @@ body {
   margin-left: -35px;
   background: transparent;
   display: grid;
+  cursor: pointer;
 }
 
 .search-form__label {
